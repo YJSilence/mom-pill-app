@@ -156,7 +156,15 @@
         const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         localStorage.setItem('pillDate', dateStr);
         localStorage.setItem('pillTime', dateStr + " " + timeStr);
-        showModal('successModal');
+        
+        // 觸發碎花特效
+        fireConfetti();
+        
+        // 顯示彈窗
+        setTimeout(() => {
+            showModal('successModal');
+        }, 300); // 稍微延遲一點讓碎花先飛一下
+        
         checkStatus();
     }
 
