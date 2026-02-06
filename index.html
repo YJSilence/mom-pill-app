@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>媽媽的吃藥小幫手</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f0f2f5; padding: 20px; }
+        .container { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        h1 { color: #333; font-size: 28px; }
+        .status-box { font-size: 24px; font-weight: bold; margin: 20px 0; padding: 20px; border-radius: 15px; }
+        .not-taken { background-color: #ffebee; color: #d32f2f; border: 2px solid #d32f2f; }
+        .taken { background-color: #e8f5e9; color: #2e7d32; border: 2px solid #2e7d32; }
+        button { width: 100%; height: 120px; font-size: 32px; font-weight: bold; color: white; border: none; border-radius: 15px; cursor: pointer; transition: 0.3s; }
+        .btn-active { background-color: #4caf50; box-shadow: 0 6px #2e7d32; }
+        .btn-active:active { box-shadow: 0 2px #2e7d32; transform: translateY(4px); }
+        .btn-disabled { background-color: #bdbdbd; cursor: not-allowed; }
+        .log { margin-top: 20px; text-align: left; font-size: 18px; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>💊 服藥紀錄</h1>
+    
+    <div id="statusBox" class="status-box not-taken">
+        今天尚未吃藥
+    </div>
+
+    <button id="medBtn" class="btn-active" onclick="takeMedicine()">
+        我吃藥了
+    </button>
+
+    <div class="log">
+        <p>上次吃藥時間：</p>
+        <span id="lastTime">無紀錄</span>
+    </div>
+</div>
+
+<script>
+    const statusBox = document.getElementById('statusBox');
+    const medBtn = document.getElementById('medBtn');
+    const lastTimeSpan = document.getElementById('lastTime');
+
+    // 檢查今天是否已經吃過藥
+    function checkStatus() {
+        const lastTaken = localStorage.getItem('lastTakenDate');
+        const today = new Date().toLocaleDateString();
+        const fullTime = localStorage.getItem('lastTakenTime');
+
+        if (lastTaken === today) {
+            statusBox.innerText = "✅ 今天已完成服藥";
+            statusBox.className = "status-box taken";
+            medBtn.innerText = "明天再記錄";
+            medBtn.className = "btn-disabled";
+            medBtn.disabled = true;
+            lastTimeSpan.innerText = fullTime;
+        }
+    }
+
+    // 點擊「我吃藥了」
+    function takeMedicine() {
+        const now = new Date();
+        const today = now.toLocaleDateString();
+        const timeString = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+        
+        localStorage.setItem('lastTakenDate', today);
+        localStorage.setItem('lastTakenTime', today + " " + timeString);
+        
+        alert("紀錄成功！媽媽辛苦了 ❤️");
+        checkStatus();
+    }
+
+    // 網頁開啟時自動檢查
+    checkStatus();
+</script>
+
+</body>
+</html>
