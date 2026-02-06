@@ -3,91 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃藥小幫手</title>
+    <title>愛的小幫手</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            /* 調整白框透明度，讓背景顏色更透 */
-            --card-bg: rgba(255, 255, 255, 0.85); 
-            --primary-green: #43a047;
-            --warning-red: #e53935;
+            --primary-green: #4caf50;
+            --primary-dark: #388e3c;
+            --warning-red: #ff5252;
+            --soft-bg: rgba(255, 255, 255, 0.88);
         }
 
         body { 
             font-family: "Microsoft JhengHei", sans-serif; 
-            background: var(--bg-gradient); 
+            margin: 0; padding: 20px;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-            padding: 15px; /* 縮小邊距 */
+            display: flex; align-items: center; justify-content: center;
             transition: background 1.5s ease;
-            overflow: hidden; /* 防止滾動條影響美觀 */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
 
-        /* 縮窄白框寬度，增加背景占比 */
         .container { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(15px); /* 增強毛玻璃效果 */
-            border-radius: 40px; 
-            padding: 40px 20px; /* 稍微縮減內邊距 */
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
-            max-width: 340px; /* 從 400px 縮小到 340px，讓背景露更多 */
-            width: 90%;
-            border: 1px solid rgba(255,255,255,0.5);
+            background: var(--soft-bg); 
+            backdrop-filter: blur(15px);
+            border-radius: 45px; 
+            padding: 40px 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+            max-width: 350px; width: 100%;
             text-align: center;
+            border: 1px solid rgba(255,255,255,0.4);
         }
 
-        h1 { color: #333; font-size: 28px; margin-bottom: 25px; }
+        h1 { color: #333; font-size: 32px; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px; }
 
+        /* 狀態卡片：增加呼吸感 */
         .status-card { 
-            font-size: 26px; font-weight: bold; 
-            margin-bottom: 30px; padding: 20px; 
-            border-radius: 25px;
+            font-size: 28px; font-weight: bold; margin-bottom: 30px; padding: 25px; border-radius: 25px;
         }
-        .not-taken { background: rgba(255, 245, 245, 0.9); color: var(--warning-red); border: 3px solid #ffcdd2; animation: pulse 2s infinite; }
-        .taken { background: rgba(241, 248, 233, 0.9); color: var(--primary-green); border: 3px solid #c8e6c9; }
+        .not-taken { background: #fff1f1; color: var(--warning-red); border: 3px solid #ffdde0; animation: pulse 2s infinite; }
+        .taken { background: #f1f8e9; color: var(--primary-green); border: 3px solid #dcedc8; }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
 
+        /* 大按鈕：移除邊框，使用漸層與陰影 */
         .main-btn { 
-            width: 100%; height: 130px; 
-            font-size: 38px; font-weight: bold; color: white; 
-            border: none; border-radius: 65px; 
-            cursor: pointer; 
+            width: 100%; height: 140px; font-size: 42px; font-weight: bold; color: white; 
+            border: none; border-radius: 70px; cursor: pointer;
             background: linear-gradient(145deg, #66bb6a, #43a047);
-            box-shadow: 0 10px 20px rgba(67, 160, 71, 0.3);
+            box-shadow: 0 12px 24px rgba(76, 175, 80, 0.3);
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
-        .main-btn:active { transform: scale(0.92); }
-        .btn-disabled { background: #bdbdbd !important; box-shadow: none !important; cursor: not-allowed; }
+        .main-btn:active { transform: scale(0.92); box-shadow: 0 5px 10px rgba(0,0,0,0.2); }
+        .btn-disabled { background: #cfd8dc !important; box-shadow: none !important; cursor: not-allowed; }
 
-        .log-box { 
-            margin-top: 30px; padding: 20px; 
-            background: rgba(0,0,0,0.05); border-radius: 20px;
-            text-align: left;
-        }
-        .log-time { font-size: 22px; color: #333; font-weight: bold; }
+        /* 紀錄區：增加層次感 */
+        .log-box { margin-top: 35px; padding: 25px; background: rgba(0,0,0,0.04); border-radius: 25px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.05); text-align: left; }
+        .log-time { font-size: 24px; color: #333; font-weight: bold; margin-top: 5px; }
 
+        /* 彈窗優化 */
         .modal { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 80%; max-width: 320px; background: white; padding: 35px; 
-            border-radius: 35px; box-shadow: 0 25px 60px rgba(0,0,0,0.4); z-index: 1000;
+            width: 85%; max-width: 320px; background: white; padding: 40px; border-radius: 40px; 
+            box-shadow: 0 30px 70px rgba(0,0,0,0.3); z-index: 1000;
         }
+        /* 妳想放大的字體在這裡調整 */
+        .modal-body { font-size: 32px; color: #444; margin-bottom: 30px; line-height: 1.5; font-weight: bold; }
+        
+        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.35); backdrop-filter: blur(8px); z-index: 999; }
+        .modal-btn { width: 100%; border: none; padding: 20px; border-radius: 25px; font-size: 26px; font-weight: bold; cursor: pointer; background: var(--primary-green); color: white; }
 
-        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); z-index: 999; }
-
-        .modal-btn { width: 100%; border: none; padding: 15px; border-radius: 18px; font-size: 22px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-confirm { background: var(--primary-green); color: white; }
-        .btn-cancel { background: #eee; color: #666; margin-top: 10px; }
-
-        .reset-btn { margin-top: 50px; background: transparent; color: rgba(0,0,0,0.3); border: none; font-size: 16px; cursor: pointer; text-decoration: underline; }
+        .reset-btn { margin-top: 60px; background: transparent; color: #999; border: none; font-size: 16px; cursor: pointer; text-decoration: underline; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -95,58 +78,55 @@
 <div id="modalOverlay"></div>
 
 <div id="successModal" class="modal">
-    <div style="font-size: 60px; margin-bottom: 10px;">❤️</div>
-    <div style="font-size: 28px; font-weight: bold; color: #2e7d32; margin-bottom: 15px;">紀錄成功</div>
-    <div style="font-size: 30px; color: #444; margin-bottom: 27px; line-height: 1.4;">媽，辛苦了！<br>要多休息 多照顧身體 多喝水喔。</div>
-    <button class="modal-btn btn-confirm" onclick="closeModal('successModal')">確定</button>
-</div>
-
-<div id="resetConfirmModal" class="modal">
-    <div style="font-size: 60px; margin-bottom: 10px;">⚠️</div>
-    <div style="font-size: 26px; font-weight: bold; color: #d32f2f; margin-bottom: 15px;">確定清除嗎？</div>
-    <button class="modal-btn btn-confirm" onclick="executeReset()">確定</button>
-    <button class="modal-btn btn-cancel" onclick="closeModal('resetConfirmModal')">取消</button>
+    <div style="font-size: 70px; margin-bottom: 15px;">❤️</div>
+    <div style="font-size: 28px; font-weight: bold; color: #2e7d32; margin-bottom: 10px;">紀錄成功！</div>
+    <div class="modal-body">媽，辛苦了！<br>要多休息、多喝水喔。</div>
+    <button class="modal-btn" onclick="closeModal('successModal')">確定</button>
 </div>
 
 <div class="container">
-    <h1>💊 吃藥小幫手</h1>
-    <div id="statusBox" class="status-card not-taken">今天尚未吃藥</div>
+    <h1>💊 吃藥紀錄</h1>
+    <div id="statusBox" class="status-card not-taken">尚未吃藥</div>
     <button id="medBtn" class="main-btn" onclick="takeMedicine()">我吃藥了</button>
     <div class="log-box">
-        <div style="color:#666; font-size:16px;">上次紀錄：</div>
+        <div style="color:#777; font-size:18px;">上次紀錄時間：</div>
         <div id="lastTime" class="log-time">無紀錄</div>
     </div>
-    <button class="reset-btn" onclick="showResetModal()">🔄 重新紀錄</button>
+    <button class="reset-btn" onclick="executeReset()">🔄 清除紀錄 (重新測試)</button>
 </div>
 
 <script>
-    function updateBackground() {
-        const hour = new Date().getHours();
-        let gradient = "";
-        if (hour >= 5 && hour < 12) gradient = "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)";
-        else if (hour >= 12 && hour < 18) gradient = "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)";
-        else gradient = "linear-gradient(135deg, #243949 0%, #517fa4 100%)";
-        document.body.style.background = gradient;
+    // 自動背景功能
+    function updateBg() {
+        const h = new Date().getHours();
+        const b = document.body;
+        if (h >= 5 && h < 12) b.style.background = "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)";
+        else if (h >= 12 && h < 18) b.style.background = "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)";
+        else b.style.background = "linear-gradient(135deg, #243949 0%, #517fa4 100%)";
     }
 
     function checkStatus() {
         const lastDate = localStorage.getItem('pillDate');
         const lastTime = localStorage.getItem('pillTime');
         const today = new Date().toLocaleDateString();
+        const st = document.getElementById('statusBox');
+        const btn = document.getElementById('medBtn');
+        const lt = document.getElementById('lastTime');
+
         if (lastDate === today) {
-            document.getElementById('statusBox').innerHTML = "✅ 今天已完成";
-            document.getElementById('statusBox').className = "status-card taken";
-            document.getElementById('medBtn').innerText = "明天再按";
-            document.getElementById('medBtn').classList.add('btn-disabled');
-            document.getElementById('medBtn').disabled = true;
-            document.getElementById('lastTime').innerText = lastTime;
+            st.innerHTML = "✅ 今天已完成";
+            st.className = "status-card taken";
+            btn.innerText = "明天再按";
+            btn.classList.add('btn-disabled');
+            btn.disabled = true;
+            lt.innerText = lastTime;
         } else {
-            document.getElementById('statusBox').innerHTML = "⚠️ 尚未吃藥";
-            document.getElementById('statusBox').className = "status-card not-taken";
-            document.getElementById('medBtn').innerText = "我吃藥了";
-            document.getElementById('medBtn').classList.remove('btn-disabled');
-            document.getElementById('medBtn').disabled = false;
-            document.getElementById('lastTime').innerText = lastTime || "無紀錄";
+            st.innerHTML = "⚠️ 尚未吃藥";
+            st.className = "status-card not-taken";
+            btn.innerText = "我吃藥了";
+            btn.classList.remove('btn-disabled');
+            btn.disabled = false;
+            lt.innerText = lastTime || "無紀錄";
         }
     }
 
@@ -156,13 +136,9 @@
         const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         localStorage.setItem('pillDate', dateStr);
         localStorage.setItem('pillTime', dateStr + " " + timeStr);
-        showModal('successModal');
-        checkStatus();
-    }
-
-    function showModal(id) {
-        document.getElementById(id).style.display = 'block';
+        document.getElementById('successModal').style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
+        checkStatus();
     }
 
     function closeModal(id) {
@@ -170,14 +146,14 @@
         document.getElementById('modalOverlay').style.display = 'none';
     }
 
-    function showResetModal() { showModal('resetConfirmModal'); }
-
     function executeReset() {
-        localStorage.clear();
-        location.reload();
+        if(confirm("確定要清除紀錄嗎？")) {
+            localStorage.clear();
+            location.reload();
+        }
     }
 
-    updateBackground();
+    updateBg();
     checkStatus();
 </script>
 </body>
