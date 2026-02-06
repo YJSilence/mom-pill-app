@@ -194,6 +194,9 @@
 
     updateBackground();
     checkStatus();
+
+    // 當重新打開或切換回這個分頁時，自動檢查日期
+    window.addEventListener('focus', checkStatus);
 </script>
 </body>
 </html>
