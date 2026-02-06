@@ -34,21 +34,23 @@
             border: 1px solid rgba(255,255,255,0.3);
         }
 
-        h1 { color: #333; font-size: 28px; margin-bottom: 25px; }
+        h1 { color: #333; font-size: 32px; margin-bottom: 25px; }
 
+        /* 狀態卡片 */
         .status-card { 
-            font-size: 24px; font-weight: bold; 
-            margin-bottom: 30px; padding: 20px; 
+            font-size: 28px; font-weight: bold; 
+            margin-bottom: 30px; padding: 25px; 
             border-radius: 20px;
             transition: all 0.5s ease;
         }
-        .not-taken { background: #fff5f5; color: var(--warning-red); border: 2px solid #ffcdd2; }
-        .taken { background: #f1f8e9; color: var(--primary-green); border: 2px solid #c8e6c9; }
+        .not-taken { background: #fff5f5; color: var(--warning-red); border: 3px solid #ffcdd2; }
+        .taken { background: #f1f8e9; color: var(--primary-green); border: 3px solid #c8e6c9; }
 
+        /* 主要大按鈕 */
         .main-btn { 
-            width: 100%; height: 120px; 
-            font-size: 32px; font-weight: bold; color: white; 
-            border: none; border-radius: 60px; 
+            width: 100%; height: 140px; 
+            font-size: 40px; font-weight: bold; color: white; 
+            border: none; border-radius: 70px; 
             cursor: pointer; 
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 10px 20px rgba(67, 160, 71, 0.3);
@@ -57,27 +59,45 @@
         .main-btn:active { transform: scale(0.95); }
         .btn-disabled { background: #bdbdbd !important; box-shadow: none !important; cursor: not-allowed; }
 
+        /* 紀錄區 */
         .log-box { 
-            margin-top: 30px; padding: 15px; 
+            margin-top: 30px; padding: 20px; 
             background: rgba(0,0,0,0.03); border-radius: 15px;
             text-align: left;
         }
-        .log-time { font-size: 18px; color: #333; font-weight: bold; }
+        .log-time { font-size: 22px; color: #333; font-weight: bold; }
 
-        /* 自訂彈窗樣式 */
+        /* 彈窗字體加大 */
         .modal { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 85%; max-width: 320px; background: white; padding: 30px; 
+            width: 85%; max-width: 350px; background: white; padding: 35px; 
             border-radius: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 1000;
         }
+        .modal-title { font-size: 30px; font-weight: bold; margin-bottom: 20px; }
+        .modal-body { font-size: 24px; color: #333; margin-bottom: 25px; line-height: 1.4; }
+
         #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 999; }
 
-        .modal-btn-group { display: flex; gap: 10px; margin-top: 20px; }
-        .modal-btn { flex: 1; border: none; padding: 12px; border-radius: 15px; font-size: 18px; cursor: pointer; }
+        .modal-btn-group { display: flex; gap: 15px; margin-top: 10px; }
+        .modal-btn { flex: 1; border: none; padding: 15px; border-radius: 15px; font-size: 22px; font-weight: bold; cursor: pointer; }
         .btn-confirm { background: var(--primary-green); color: white; }
         .btn-cancel { background: #eee; color: #666; }
 
-        .reset-btn { margin-top: 40px; background: transparent; color: #aaa; border: none; font-size: 14px; cursor: pointer; text-decoration: underline; }
+        /* 實體重製按鈕 - 放大版 */
+        .reset-btn { 
+            margin-top: 50px; 
+            background-color: #eeeeee; 
+            color: #757575; 
+            border: 2px solid #bdbdbd; 
+            padding: 15px 30px; 
+            border-radius: 15px; 
+            font-size: 20px; 
+            font-weight: bold;
+            cursor: pointer; 
+            display: inline-block;
+            transition: 0.2s;
+        }
+        .reset-btn:active { background-color: #e0e0e0; transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -85,16 +105,16 @@
 <div id="modalOverlay"></div>
 
 <div id="successModal" class="modal">
-    <div style="font-size: 50px; margin-bottom: 10px;">❤️</div>
-    <div style="font-size: 22px; font-weight: bold; margin-bottom: 15px;">紀錄成功</div>
-    <div style="color: #666; margin-bottom: 20px;">媽，辛苦了！<br>要多休息照顧身體喔。</div>
+    <div style="font-size: 60px; margin-bottom: 10px;">❤️</div>
+    <div class="modal-title" style="color: #2e7d32;">紀錄成功</div>
+    <div class="modal-body">媽，辛苦了！<br>要多休息照顧身體喔。</div>
     <button class="modal-btn btn-confirm" onclick="closeModal('successModal')">確定</button>
 </div>
 
 <div id="resetConfirmModal" class="modal">
-    <div style="font-size: 50px; margin-bottom: 10px;">⚠️</div>
-    <div style="font-size: 22px; font-weight: bold; margin-bottom: 15px;">系統提示</div>
-    <div style="color: #666; margin-bottom: 20px;">確定要清除紀錄嗎？</div>
+    <div style="font-size: 60px; margin-bottom: 10px;">⚠️</div>
+    <div class="modal-title" style="color: #d32f2f;">系統提示</div>
+    <div class="modal-body">確定要清除紀錄嗎？</div>
     <div class="modal-btn-group">
         <button class="modal-btn btn-confirm" onclick="executeReset()">確定</button>
         <button class="modal-btn btn-cancel" onclick="closeModal('resetConfirmModal')">取消</button>
@@ -106,10 +126,13 @@
     <div id="statusBox" class="status-card not-taken">今天尚未吃藥</div>
     <button id="medBtn" class="main-btn" onclick="takeMedicine()">我吃藥了</button>
     <div class="log-box">
-        <div style="color:#888; font-size:14px;">上次紀錄時間：</div>
+        <div style="color:#888; font-size:16px;">上次紀錄時間：</div>
         <div id="lastTime" class="log-time">無紀錄</div>
     </div>
-    <button class="reset-btn" onclick="showResetModal()">清除紀錄 (重新測試)</button>
+    
+    <button class="reset-btn" onclick="showResetModal()">
+        🔄 清除紀錄 / 重新測試
+    </button>
 </div>
 
 <script>
@@ -119,9 +142,9 @@
         const today = new Date().toLocaleDateString();
 
         if (lastDate === today) {
-            document.getElementById('statusBox').innerHTML = "✨ 今天已完成服藥";
+            document.getElementById('statusBox').innerHTML = "✅ 今天已完成服藥";
             document.getElementById('statusBox').className = "status-card taken";
-            document.getElementById('medBtn').innerText = "明天見";
+            document.getElementById('medBtn').innerText = "明天再按";
             document.getElementById('medBtn').classList.add('btn-disabled');
             document.getElementById('medBtn').disabled = true;
             document.getElementById('lastTime').innerText = lastTime;
@@ -155,12 +178,10 @@
         document.getElementById('modalOverlay').style.display = 'none';
     }
 
-    // 呼叫自訂的重製彈窗
     function showResetModal() {
         showModal('resetConfirmModal');
     }
 
-    // 真正執行重製
     function executeReset() {
         localStorage.clear();
         closeModal('resetConfirmModal');
