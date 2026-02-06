@@ -5,23 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>媽媽的吃藥小幫手</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background-color: #f0f2f5; padding: 20px; }
+        body { font-family: "Microsoft JhengHei", sans-serif; text-align: center; background-color: #f0f2f5; padding: 20px; }
         .container { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        h1 { color: #333; font-size: 28px; }
-        .status-box { font-size: 24px; font-weight: bold; margin: 20px 0; padding: 20px; border-radius: 15px; }
-        .not-taken { background-color: #ffebee; color: #d32f2f; border: 2px solid #d32f2f; }
-        .taken { background-color: #e8f5e9; color: #2e7d32; border: 2px solid #2e7d32; }
-        button { width: 100%; height: 120px; font-size: 32px; font-weight: bold; color: white; border: none; border-radius: 15px; cursor: pointer; transition: 0.3s; }
-        .btn-active { background-color: #4caf50; box-shadow: 0 6px #2e7d32; }
+        h1 { color: #333; font-size: 32px; margin-bottom: 10px; }
+        .status-box { font-size: 26px; font-weight: bold; margin: 25px 0; padding: 25px; border-radius: 15px; }
+        .not-taken { background-color: #ffebee; color: #d32f2f; border: 3px solid #d32f2f; }
+        .taken { background-color: #e8f5e9; color: #2e7d32; border: 3px solid #2e7d32; }
+        button { width: 100%; height: 140px; font-size: 36px; font-weight: bold; color: white; border: none; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .btn-active { background-color: #4caf50; box-shadow: 0 8px #2e7d32; }
         .btn-active:active { box-shadow: 0 2px #2e7d32; transform: translateY(4px); }
         .btn-disabled { background-color: #bdbdbd; cursor: not-allowed; }
-        .log { margin-top: 20px; text-align: left; font-size: 18px; color: #666; }
+        .log { margin-top: 30px; text-align: left; font-size: 20px; color: #555; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+        #lastTime { font-weight: bold; color: #333; }
+        .reset-link { margin-top: 60px; display: block; color: #ddd; font-size: 14px; text-decoration: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>💊 服藥紀錄</h1>
+    <h1>💊 吃藥紀錄</h1>
     
     <div id="statusBox" class="status-box not-taken">
         今天尚未吃藥
@@ -35,6 +37,8 @@
         <p>上次吃藥時間：</p>
         <span id="lastTime">無紀錄</span>
     </div>
+
+    <a href="#" class="reset-link" onclick="resetData()">重製紀錄 (測試專用)</a>
 </div>
 
 <script>
@@ -42,36 +46,52 @@
     const medBtn = document.getElementById('medBtn');
     const lastTimeSpan = document.getElementById('lastTime');
 
-    // 檢查今天是否已經吃過藥
+    // 檢查狀態的邏輯
     function checkStatus() {
-        const lastTaken = localStorage.getItem('lastTakenDate');
+        const lastTakenDate = localStorage.getItem('lastTakenDate');
+        const lastTakenTime = localStorage.getItem('lastTakenTime');
         const today = new Date().toLocaleDateString();
-        const fullTime = localStorage.getItem('lastTakenTime');
 
-        if (lastTaken === today) {
-            statusBox.innerText = "✅ 今天已完成服藥";
+        if (lastTakenDate === today) {
+            statusBox.innerText = "✅ 今天已服藥";
             statusBox.className = "status-box taken";
-            medBtn.innerText = "明天再記錄";
+            medBtn.innerText = "明天再按";
             medBtn.className = "btn-disabled";
             medBtn.disabled = true;
-            lastTimeSpan.innerText = fullTime;
+            lastTimeSpan.innerText = lastTakenTime;
+        } else {
+            statusBox.innerText = "⚠️ 今天尚未吃藥";
+            statusBox.className = "status-box not-taken";
+            medBtn.innerText = "我吃藥了";
+            medBtn.className = "btn-active";
+            medBtn.disabled = false;
+            lastTimeSpan.innerText = lastTakenTime || "無紀錄";
         }
     }
 
-    // 點擊「我吃藥了」
+    // 按下按鈕的邏輯
     function takeMedicine() {
         const now = new Date();
         const today = now.toLocaleDateString();
-        const timeString = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0');
+        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
         localStorage.setItem('lastTakenDate', today);
         localStorage.setItem('lastTakenTime', today + " " + timeString);
         
-        alert("紀錄成功！媽媽辛苦了 ❤️");
+        alert("紀錄成功！");
         checkStatus();
     }
 
-    // 網頁開啟時自動檢查
+    // 重製按鈕的邏輯
+    function resetData() {
+        if(confirm("確定要清除今天的紀錄重新測試嗎？")) {
+            localStorage.removeItem('lastTakenDate');
+            localStorage.removeItem('lastTakenTime');
+            location.reload();
+        }
+    }
+
+    // 網頁開啟時執行檢查
     checkStatus();
 </script>
 
