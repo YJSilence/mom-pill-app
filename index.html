@@ -3,39 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>媽媽的吃藥小幫手</title>
+    <title>吃藥的小幫手</title>
     <style>
-        body { font-family: "Microsoft JhengHei", sans-serif; text-align: center; background-color: #f0f2f5; padding: 20px; }
-        .container { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; position: relative; }
-        h1 { color: #333; font-size: 32px; margin-bottom: 10px; }
-        
-        /* 狀態框 */
-        .status-box { font-size: 26px; font-weight: bold; margin: 25px 0; padding: 25px; border-radius: 15px; }
-        .not-taken { background-color: #ffebee; color: #d32f2f; border: 3px solid #d32f2f; }
-        .taken { background-color: #e8f5e9; color: #2e7d32; border: 3px solid #2e7d32; }
-        
-        /* 主要大按鈕 */
-        .main-btn { width: 100%; height: 140px; font-size: 36px; font-weight: bold; color: white; border: none; border-radius: 20px; cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
-        .btn-active { background-color: #4caf50; box-shadow: 0 8px #2e7d32; }
-        .btn-active:active { box-shadow: 0 2px #2e7d32; transform: translateY(4px); }
-        .btn-disabled { background-color: #bdbdbd; cursor: not-allowed; box-shadow: none; }
-        
-        /* 紀錄顯示區 */
-        .log { text-align: left; font-size: 20px; color: #555; background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 40px; }
-        #lastTime { font-weight: bold; color: #333; }
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --primary-green: #43a047;
+            --warning-red: #e53935;
+        }
 
-        /* 自訂彈窗樣式 (通用) */
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 320px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 1000; }
-        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
-        .modal-title { font-size: 24px; font-weight: bold; margin-bottom: 15px; }
-        .modal-body { font-size: 20px; color: #333; margin-bottom: 20px; line-height: 1.5; }
-        .modal-btn-group { display: flex; gap: 10px; justify-content: center; }
-        .modal-btn { border: none; padding: 10px 25px; border-radius: 10px; font-size: 18px; cursor: pointer; min-width: 100px; }
-        .btn-confirm { background: #4caf50; color: white; }
-        .btn-cancel { background: #eeeeee; color: #757575; }
+        body { 
+            font-family: "Microsoft JhengHei", sans-serif; 
+            background: var(--bg-gradient); 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
 
-        /* 重製按鈕 */
-        .reset-btn { background-color: #eeeeee; color: #757575; border: 2px solid #bdbdbd; padding: 12px 24px; border-radius: 12px; font-size: 18px; cursor: pointer; display: inline-block; }
+        .container { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(10px);
+            border-radius: 30px; 
+            padding: 40px 30px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            max-width: 400px; 
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        h1 { color: #333; font-size: 28px; margin-bottom: 25px; }
+
+        .status-card { 
+            font-size: 24px; font-weight: bold; 
+            margin-bottom: 30px; padding: 20px; 
+            border-radius: 20px;
+            transition: all 0.5s ease;
+        }
+        .not-taken { background: #fff5f5; color: var(--warning-red); border: 2px solid #ffcdd2; }
+        .taken { background: #f1f8e9; color: var(--primary-green); border: 2px solid #c8e6c9; }
+
+        .main-btn { 
+            width: 100%; height: 120px; 
+            font-size: 32px; font-weight: bold; color: white; 
+            border: none; border-radius: 60px; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(67, 160, 71, 0.3);
+            background: linear-gradient(to bottom, #66bb6a, #43a047);
+        }
+        .main-btn:active { transform: scale(0.95); }
+        .btn-disabled { background: #bdbdbd !important; box-shadow: none !important; cursor: not-allowed; }
+
+        .log-box { 
+            margin-top: 30px; padding: 15px; 
+            background: rgba(0,0,0,0.03); border-radius: 15px;
+            text-align: left;
+        }
+        .log-time { font-size: 18px; color: #333; font-weight: bold; }
+
+        /* 自訂彈窗樣式 */
+        .modal { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 85%; max-width: 320px; background: white; padding: 30px; 
+            border-radius: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 1000;
+        }
+        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 999; }
+
+        .modal-btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        .modal-btn { flex: 1; border: none; padding: 12px; border-radius: 15px; font-size: 18px; cursor: pointer; }
+        .btn-confirm { background: var(--primary-green); color: white; }
+        .btn-cancel { background: #eee; color: #666; }
+
+        .reset-btn { margin-top: 40px; background: transparent; color: #aaa; border: none; font-size: 14px; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -43,79 +85,66 @@
 <div id="modalOverlay"></div>
 
 <div id="successModal" class="modal">
-    <div class="modal-title" style="color: #2e7d32;">❤️ 紀錄成功</div>
-    <div class="modal-body">媽，辛苦了！<br>要多休息照顧身體喔。</div>
+    <div style="font-size: 50px; margin-bottom: 10px;">❤️</div>
+    <div style="font-size: 22px; font-weight: bold; margin-bottom: 15px;">紀錄成功</div>
+    <div style="color: #666; margin-bottom: 20px;">媽，辛苦了！<br>要多休息照顧身體喔。</div>
     <button class="modal-btn btn-confirm" onclick="closeModal('successModal')">確定</button>
 </div>
 
-<div id="resetModal" class="modal">
-    <div class="modal-title" style="color: #d32f2f;">⚠️ 系統提示</div>
-    <div class="modal-body">確定要清除紀錄嗎？</div>
+<div id="resetConfirmModal" class="modal">
+    <div style="font-size: 50px; margin-bottom: 10px;">⚠️</div>
+    <div style="font-size: 22px; font-weight: bold; margin-bottom: 15px;">系統提示</div>
+    <div style="color: #666; margin-bottom: 20px;">確定要清除紀錄嗎？</div>
     <div class="modal-btn-group">
         <button class="modal-btn btn-confirm" onclick="executeReset()">確定</button>
-        <button class="modal-btn btn-cancel" onclick="closeModal('resetModal')">取消</button>
+        <button class="modal-btn btn-cancel" onclick="closeModal('resetConfirmModal')">取消</button>
     </div>
 </div>
 
 <div class="container">
-    <h1>💊 吃藥紀錄</h1>
-    
-    <div id="statusBox" class="status-box not-taken">⚠️ 今天尚未吃藥</div>
-
-    <button id="medBtn" class="main-btn btn-active" onclick="takeMedicine()">
-        我吃藥了
-    </button>
-
-    <div class="log">
-        <p>上次吃藥時間：</p>
-        <span id="lastTime">無紀錄</span>
+    <h1>💊 吃藥紀錄小幫手</h1>
+    <div id="statusBox" class="status-card not-taken">今天尚未吃藥</div>
+    <button id="medBtn" class="main-btn" onclick="takeMedicine()">我吃藥了</button>
+    <div class="log-box">
+        <div style="color:#888; font-size:14px;">上次紀錄時間：</div>
+        <div id="lastTime" class="log-time">無紀錄</div>
     </div>
-
-    <button class="reset-btn" onclick="showResetModal()">
-        🔄 清除紀錄 
-    </button>
+    <button class="reset-btn" onclick="showResetModal()">清除紀錄 (重新測試)</button>
 </div>
 
 <script>
-    const statusBox = document.getElementById('statusBox');
-    const medBtn = document.getElementById('medBtn');
-    const lastTimeSpan = document.getElementById('lastTime');
-
     function checkStatus() {
-        const lastTakenDate = localStorage.getItem('lastTakenDate');
-        const lastTakenTime = localStorage.getItem('lastTakenTime');
+        const lastDate = localStorage.getItem('pillDate');
+        const lastTime = localStorage.getItem('pillTime');
         const today = new Date().toLocaleDateString();
 
-        if (lastTakenDate === today) {
-            statusBox.innerHTML = "✅ 今天已服藥";
-            statusBox.className = "status-box taken";
-            medBtn.innerText = "明天再按";
-            medBtn.className = "main-btn btn-disabled";
-            medBtn.disabled = true;
-            lastTimeSpan.innerText = lastTakenTime;
+        if (lastDate === today) {
+            document.getElementById('statusBox').innerHTML = "✨ 今天已完成服藥";
+            document.getElementById('statusBox').className = "status-card taken";
+            document.getElementById('medBtn').innerText = "明天見";
+            document.getElementById('medBtn').classList.add('btn-disabled');
+            document.getElementById('medBtn').disabled = true;
+            document.getElementById('lastTime').innerText = lastTime;
         } else {
-            statusBox.innerHTML = "⚠️ 今天尚未吃藥";
-            statusBox.className = "status-box not-taken";
-            medBtn.innerText = "我吃藥了";
-            medBtn.className = "main-btn btn-active";
-            medBtn.disabled = false;
-            lastTimeSpan.innerText = lastTakenTime || "無紀錄";
+            document.getElementById('statusBox').innerHTML = "⚠️ 今天尚未吃藥";
+            document.getElementById('statusBox').className = "status-card not-taken";
+            document.getElementById('medBtn').innerText = "我吃藥了";
+            document.getElementById('medBtn').classList.remove('btn-disabled');
+            document.getElementById('medBtn').disabled = false;
+            document.getElementById('lastTime').innerText = lastTime || "無紀錄";
         }
     }
 
     function takeMedicine() {
         const now = new Date();
-        const today = now.toLocaleDateString();
-        const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
-        localStorage.setItem('lastTakenDate', today);
-        localStorage.setItem('lastTakenTime', today + " " + timeString);
-        
+        const dateStr = now.toLocaleDateString();
+        const timeStr = dateStr + " " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        localStorage.setItem('pillDate', dateStr);
+        localStorage.setItem('pillTime', timeStr);
         showModal('successModal');
         checkStatus();
     }
 
-    // 彈窗邏輯
     function showModal(id) {
         document.getElementById(id).style.display = 'block';
         document.getElementById('modalOverlay').style.display = 'block';
@@ -126,19 +155,19 @@
         document.getElementById('modalOverlay').style.display = 'none';
     }
 
+    // 呼叫自訂的重製彈窗
     function showResetModal() {
-        showModal('resetModal');
+        showModal('resetConfirmModal');
     }
 
+    // 真正執行重製
     function executeReset() {
-        localStorage.removeItem('lastTakenDate');
-        localStorage.removeItem('lastTakenTime');
-        closeModal('resetModal');
+        localStorage.clear();
+        closeModal('resetConfirmModal');
         location.reload();
     }
 
     checkStatus();
 </script>
-
 </body>
 </html>
