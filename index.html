@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>吃藥小幫手</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            /* 調整白框透明度，讓背景顏色更透 */
             --card-bg: rgba(255, 255, 255, 0.85); 
             --primary-green: #43a047;
             --warning-red: #e53935;
@@ -21,19 +23,18 @@
             align-items: center;
             justify-content: center;
             margin: 0;
-            padding: 15px; /* 縮小邊距 */
+            padding: 15px; 
             transition: background 1.5s ease;
-            overflow: hidden; /* 防止滾動條影響美觀 */
+            overflow: hidden; 
         }
 
-        /* 縮窄白框寬度，增加背景占比 */
         .container { 
             background: var(--card-bg); 
-            backdrop-filter: blur(15px); /* 增強毛玻璃效果 */
+            backdrop-filter: blur(15px);
             border-radius: 40px; 
-            padding: 40px 20px; /* 稍微縮減內邊距 */
+            padding: 40px 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
-            max-width: 340px; /* 從 400px 縮小到 340px，讓背景露更多 */
+            max-width: 340px; 
             width: 90%;
             border: 1px solid rgba(255,255,255,0.5);
             text-align: center;
@@ -97,7 +98,7 @@
 <div id="successModal" class="modal">
     <div style="font-size: 60px; margin-bottom: 10px;">❤️</div>
     <div style="font-size: 28px; font-weight: bold; color: #2e7d32; margin-bottom: 15px;">紀錄成功</div>
-    <div style="font-size: 30px; color: #444; margin-bottom: 25px; line-height: 1.4;">媽，辛苦了！<br>要多休息 多照顧自己的身體 記得多喝水喔。</div>
+    <div style="font-size: 30px; color: #444; margin-bottom: 25px; line-height: 1.4; font-weight: bold;">媽，辛苦了！<br>要多休息 多照顧自己的身體 記得多喝水喔。</div>
     <button class="modal-btn btn-confirm" onclick="closeModal('successModal')">確定</button>
 </div>
 
@@ -150,12 +151,26 @@
         }
     }
 
+    // 2. 這裡新增：噴發彩帶碎花的動作
+    function fireConfetti() {
+        confetti({
+            particleCount: 150, // 碎花數量
+            spread: 70,         // 噴發角度範圍
+            origin: { y: 0.6 }, // 噴發位置（0.6 是從畫面中間偏下一點點噴出）
+            colors: ['#ff0000', '#4caf50', '#ffd700', '#2196f3', '#ff69b4'] // 繽紛的顏色
+        });
+    }
+
     function takeMedicine() {
         const now = new Date();
         const dateStr = now.toLocaleDateString();
         const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         localStorage.setItem('pillDate', dateStr);
         localStorage.setItem('pillTime', dateStr + " " + timeStr);
+        
+        // 3. 這裡新增：呼叫噴發彩帶功能
+        fireConfetti();
+
         showModal('successModal');
         checkStatus();
     }
