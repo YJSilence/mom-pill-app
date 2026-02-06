@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>吃藥的小幫手</title>
+    <title>吃藥小幫手</title>
     <style>
         :root {
-            /* 預設背景（會由 JS 動態改變） */
             --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --card-bg: rgba(255, 255, 255, 0.9);
+            /* 調整白框透明度，讓背景顏色更透 */
+            --card-bg: rgba(255, 255, 255, 0.85); 
             --primary-green: #43a047;
             --warning-red: #e53935;
         }
@@ -21,99 +21,73 @@
             align-items: center;
             justify-content: center;
             margin: 0;
-            padding: 20px;
-            transition: background 1.5s ease; /* 背景切換平滑化 */
+            padding: 15px; /* 縮小邊距 */
+            transition: background 1.5s ease;
+            overflow: hidden; /* 防止滾動條影響美觀 */
         }
 
-        /* 1. 漸層與圓角優化 (Card Design) */
+        /* 縮窄白框寬度，增加背景占比 */
         .container { 
             background: var(--card-bg); 
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px); /* 增強毛玻璃效果 */
             border-radius: 40px; 
-            padding: 50px 30px; 
+            padding: 40px 20px; /* 稍微縮減內邊距 */
             box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
-            max-width: 400px; 
-            width: 100%;
-            border: 1px solid rgba(255,255,255,0.4);
+            max-width: 340px; /* 從 400px 縮小到 340px，讓背景露更多 */
+            width: 90%;
+            border: 1px solid rgba(255,255,255,0.5);
             text-align: center;
         }
 
-        h1 { color: #333; font-size: 32px; margin-bottom: 30px; letter-spacing: 1px; }
+        h1 { color: #333; font-size: 28px; margin-bottom: 25px; }
 
-        /* 狀態卡片優化 */
         .status-card { 
-            font-size: 28px; font-weight: bold; 
-            margin-bottom: 35px; padding: 25px; 
+            font-size: 26px; font-weight: bold; 
+            margin-bottom: 30px; padding: 20px; 
             border-radius: 25px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
-        .not-taken { background: #fff5f5; color: var(--warning-red); border: 3px solid #ffcdd2; animation: pulse 2s infinite; }
-        .taken { background: #f1f8e9; color: var(--primary-green); border: 3px solid #c8e6c9; }
+        .not-taken { background: rgba(255, 245, 245, 0.9); color: var(--warning-red); border: 3px solid #ffcdd2; animation: pulse 2s infinite; }
+        .taken { background: rgba(241, 248, 233, 0.9); color: var(--primary-green); border: 3px solid #c8e6c9; }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
 
-        /* 2. 微動效 (Button Interactions) */
         .main-btn { 
-            width: 100%; height: 150px; 
-            font-size: 42px; font-weight: bold; color: white; 
-            border: none; border-radius: 75px; 
+            width: 100%; height: 130px; 
+            font-size: 38px; font-weight: bold; color: white; 
+            border: none; border-radius: 65px; 
             cursor: pointer; 
             background: linear-gradient(145deg, #66bb6a, #43a047);
-            box-shadow: 0 12px 25px rgba(67, 160, 71, 0.4);
+            box-shadow: 0 10px 20px rgba(67, 160, 71, 0.3);
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        /* 按下去的縮放感 */
-        .main-btn:active { 
-            transform: scale(0.92); 
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-        }
+        .main-btn:active { transform: scale(0.92); }
+        .btn-disabled { background: #bdbdbd !important; box-shadow: none !important; cursor: not-allowed; }
 
-        .btn-disabled { 
-            background: #bdbdbd !important; 
-            box-shadow: none !important; 
-            transform: none !important;
-            cursor: not-allowed; 
-        }
-
-        /* 紀錄區 */
         .log-box { 
-            margin-top: 35px; padding: 25px; 
-            background: rgba(0,0,0,0.04); border-radius: 20px;
+            margin-top: 30px; padding: 20px; 
+            background: rgba(0,0,0,0.05); border-radius: 20px;
             text-align: left;
         }
-        .log-time { font-size: 24px; color: #333; font-weight: bold; margin-top: 5px; }
+        .log-time { font-size: 22px; color: #333; font-weight: bold; }
 
-        /* 彈窗字體與動畫 */
         .modal { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 85%; max-width: 360px; background: white; padding: 40px; 
+            width: 80%; max-width: 320px; background: white; padding: 35px; 
             border-radius: 35px; box-shadow: 0 25px 60px rgba(0,0,0,0.4); z-index: 1000;
-            animation: modalShow 0.4s ease-out;
-        }
-        @keyframes modalShow {
-            from { opacity: 0; transform: translate(-50%, -40%) scale(0.9); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
-        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); backdrop-filter: blur(5px); z-index: 999; }
+        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); z-index: 999; }
 
-        .modal-btn { width: 100%; border: none; padding: 18px; border-radius: 20px; font-size: 24px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .modal-btn { width: 100%; border: none; padding: 15px; border-radius: 18px; font-size: 22px; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-confirm { background: var(--primary-green); color: white; }
-        .btn-cancel { background: #eee; color: #666; margin-top: 15px; }
+        .btn-cancel { background: #eee; color: #666; margin-top: 10px; }
 
-        /* 重製按鈕樣式優化 */
-        .reset-btn { 
-            margin-top: 60px; 
-            background: white; color: #999; 
-            border: 2px solid #ddd; padding: 12px 25px; 
-            border-radius: 20px; font-size: 18px; 
-            cursor: pointer;
-        }
+        .reset-btn { margin-top: 50px; background: transparent; color: rgba(0,0,0,0.3); border: none; font-size: 16px; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -121,48 +95,37 @@
 <div id="modalOverlay"></div>
 
 <div id="successModal" class="modal">
-    <div style="font-size: 70px; margin-bottom: 15px;">❤️</div>
-    <div style="font-size: 32px; font-weight: bold; color: #2e7d32; margin-bottom: 20px;">紀錄成功</div>
-    <div style="font-size: 26px; color: #444; margin-bottom: 30px; line-height: 1.5;">媽，辛苦了！<br>要多休息 多照顧自己的身體 記得多喝水喔。</div>
-    <button class="modal-btn btn-confirm" onclick="closeModal('successModal')">好的</button>
+    <div style="font-size: 60px; margin-bottom: 10px;">❤️</div>
+    <div style="font-size: 28px; font-weight: bold; color: #2e7d32; margin-bottom: 15px;">紀錄成功</div>
+    <div style="font-size: 22px; color: #444; margin-bottom: 25px; line-height: 1.4;">媽，辛苦了！<br>要多休息 多照顧身體 多喝水喔。</div>
+    <button class="modal-btn btn-confirm" onclick="closeModal('successModal')">確定</button>
 </div>
 
 <div id="resetConfirmModal" class="modal">
-    <div style="font-size: 70px; margin-bottom: 15px;">⚠️</div>
-    <div style="font-size: 30px; font-weight: bold; color: #d32f2f; margin-bottom: 20px;">系統提示</div>
-    <div style="font-size: 26px; color: #444; margin-bottom: 30px;">確定要清除紀錄嗎？</div>
-    <button class="modal-btn btn-confirm" onclick="executeReset()">確定清除</button>
+    <div style="font-size: 60px; margin-bottom: 10px;">⚠️</div>
+    <div style="font-size: 26px; font-weight: bold; color: #d32f2f; margin-bottom: 15px;">確定清除嗎？</div>
+    <button class="modal-btn btn-confirm" onclick="executeReset()">確定</button>
     <button class="modal-btn btn-cancel" onclick="closeModal('resetConfirmModal')">取消</button>
 </div>
 
 <div class="container">
-    <h1>💊 吃藥紀錄小幫手</h1>
+    <h1>💊 吃藥小幫手</h1>
     <div id="statusBox" class="status-card not-taken">今天尚未吃藥</div>
     <button id="medBtn" class="main-btn" onclick="takeMedicine()">我吃藥了</button>
     <div class="log-box">
-        <div style="color:#888; font-size:18px;">上次紀錄時間：</div>
+        <div style="color:#666; font-size:16px;">上次紀錄：</div>
         <div id="lastTime" class="log-time">無紀錄</div>
     </div>
     <button class="reset-btn" onclick="showResetModal()">🔄 重新紀錄</button>
 </div>
 
 <script>
-    // 1. 加入「時間流逝感」的背景
     function updateBackground() {
         const hour = new Date().getHours();
         let gradient = "";
-        
-        if (hour >= 5 && hour < 12) {
-            // 早上：溫暖晨曦
-            gradient = "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)";
-        } else if (hour >= 12 && hour < 18) {
-            // 下午：舒適晴空
-            gradient = "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)";
-        } else {
-            // 晚上：靜謐星空
-            gradient = "linear-gradient(135deg, #243949 0%, #517fa4 100%)";
-            document.querySelector('.header-msg')?.style.setProperty('color', '#ccc');
-        }
+        if (hour >= 5 && hour < 12) gradient = "linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)";
+        else if (hour >= 12 && hour < 18) gradient = "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)";
+        else gradient = "linear-gradient(135deg, #243949 0%, #517fa4 100%)";
         document.body.style.background = gradient;
     }
 
@@ -170,16 +133,15 @@
         const lastDate = localStorage.getItem('pillDate');
         const lastTime = localStorage.getItem('pillTime');
         const today = new Date().toLocaleDateString();
-
         if (lastDate === today) {
-            document.getElementById('statusBox').innerHTML = "✅ 今天已完成服藥";
+            document.getElementById('statusBox').innerHTML = "✅ 今天已完成";
             document.getElementById('statusBox').className = "status-card taken";
             document.getElementById('medBtn').innerText = "明天再按";
             document.getElementById('medBtn').classList.add('btn-disabled');
             document.getElementById('medBtn').disabled = true;
             document.getElementById('lastTime').innerText = lastTime;
         } else {
-            document.getElementById('statusBox').innerHTML = "⚠️ 今天尚未吃藥";
+            document.getElementById('statusBox').innerHTML = "⚠️ 尚未吃藥";
             document.getElementById('statusBox').className = "status-card not-taken";
             document.getElementById('medBtn').innerText = "我吃藥了";
             document.getElementById('medBtn').classList.remove('btn-disabled');
@@ -191,9 +153,9 @@
     function takeMedicine() {
         const now = new Date();
         const dateStr = now.toLocaleDateString();
-        const timeStr = dateStr + " " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         localStorage.setItem('pillDate', dateStr);
-        localStorage.setItem('pillTime', timeStr);
+        localStorage.setItem('pillTime', dateStr + " " + timeStr);
         showModal('successModal');
         checkStatus();
     }
@@ -212,11 +174,9 @@
 
     function executeReset() {
         localStorage.clear();
-        closeModal('resetConfirmModal');
         location.reload();
     }
 
-    // 初始化
     updateBackground();
     checkStatus();
 </script>
