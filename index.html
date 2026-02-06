@@ -8,16 +8,25 @@
         body { font-family: "Microsoft JhengHei", sans-serif; text-align: center; background-color: #f0f2f5; padding: 20px; }
         .container { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
         h1 { color: #333; font-size: 32px; margin-bottom: 10px; }
+        
+        /* 狀態框 */
         .status-box { font-size: 26px; font-weight: bold; margin: 25px 0; padding: 25px; border-radius: 15px; }
         .not-taken { background-color: #ffebee; color: #d32f2f; border: 3px solid #d32f2f; }
         .taken { background-color: #e8f5e9; color: #2e7d32; border: 3px solid #2e7d32; }
-        button { width: 100%; height: 140px; font-size: 36px; font-weight: bold; color: white; border: none; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        
+        /* 主要大按鈕 */
+        .main-btn { width: 100%; height: 140px; font-size: 36px; font-weight: bold; color: white; border: none; border-radius: 20px; cursor: pointer; transition: 0.3s; margin-bottom: 20px; }
         .btn-active { background-color: #4caf50; box-shadow: 0 8px #2e7d32; }
         .btn-active:active { box-shadow: 0 2px #2e7d32; transform: translateY(4px); }
-        .btn-disabled { background-color: #bdbdbd; cursor: not-allowed; }
-        .log { margin-top: 30px; text-align: left; font-size: 20px; color: #555; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+        .btn-disabled { background-color: #bdbdbd; cursor: not-allowed; box-shadow: none; }
+        
+        /* 紀錄顯示區 */
+        .log { text-align: left; font-size: 20px; color: #555; background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 40px; }
         #lastTime { font-weight: bold; color: #333; }
-        .reset-link { margin-top: 60px; display: block; color: #ddd; font-size: 14px; text-decoration: none; }
+
+        /* 重製按鈕樣式 - 做得明顯一點但顏色低調 */
+        .reset-btn { background-color: #e0e0e0; color: #616161; border: 1px solid #bdbdbd; padding: 10px 20px; border-radius: 10px; font-size: 16px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .reset-btn:active { background-color: #d1d1d1; }
     </style>
 </head>
 <body>
@@ -25,11 +34,9 @@
 <div class="container">
     <h1>💊 吃藥紀錄</h1>
     
-    <div id="statusBox" class="status-box not-taken">
-        今天尚未吃藥
-    </div>
+    <div id="statusBox" class="status-box not-taken">⚠️ 今天尚未吃藥</div>
 
-    <button id="medBtn" class="btn-active" onclick="takeMedicine()">
+    <button id="medBtn" class="main-btn btn-active" onclick="takeMedicine()">
         我吃藥了
     </button>
 
@@ -38,7 +45,9 @@
         <span id="lastTime">無紀錄</span>
     </div>
 
-    <a href="#" class="reset-link" onclick="resetData()">重製紀錄 (測試專用)</a>
+    <button class="reset-btn" onclick="resetData()">
+        🔄 重製紀錄
+    </button>
 </div>
 
 <script>
@@ -46,7 +55,6 @@
     const medBtn = document.getElementById('medBtn');
     const lastTimeSpan = document.getElementById('lastTime');
 
-    // 檢查狀態的邏輯
     function checkStatus() {
         const lastTakenDate = localStorage.getItem('lastTakenDate');
         const lastTakenTime = localStorage.getItem('lastTakenTime');
@@ -56,20 +64,19 @@
             statusBox.innerText = "✅ 今天已服藥";
             statusBox.className = "status-box taken";
             medBtn.innerText = "明天再按";
-            medBtn.className = "btn-disabled";
+            medBtn.className = "main-btn btn-disabled";
             medBtn.disabled = true;
             lastTimeSpan.innerText = lastTakenTime;
         } else {
             statusBox.innerText = "⚠️ 今天尚未吃藥";
             statusBox.className = "status-box not-taken";
             medBtn.innerText = "我吃藥了";
-            medBtn.className = "btn-active";
+            medBtn.className = "main-btn btn-active";
             medBtn.disabled = false;
             lastTimeSpan.innerText = lastTakenTime || "無紀錄";
         }
     }
 
-    // 按下按鈕的邏輯
     function takeMedicine() {
         const now = new Date();
         const today = now.toLocaleDateString();
@@ -82,16 +89,14 @@
         checkStatus();
     }
 
-    // 重製按鈕的邏輯
     function resetData() {
-        if(confirm("確定要清除今天的紀錄重新測試嗎？")) {
+        if(confirm("確定要重製今天的紀錄嗎？")) {
             localStorage.removeItem('lastTakenDate');
             localStorage.removeItem('lastTakenTime');
             location.reload();
         }
     }
 
-    // 網頁開啟時執行檢查
     checkStatus();
 </script>
 
